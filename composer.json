@@ -1,0 +1,29 @@
+{
+    "name": "alexvergara/auditable",
+    "license": "MIT",
+    "description": "Save model's data changes automatically to audit log - package for Laravel 4",
+    "keywords": ["model", "laravel", "audit", "history"],
+    "homepage": "http://github.com/alexvergara/auditable",
+    "authors": [
+        {
+            "name": "Alex Vergara",
+            "email": "alex.vergara@gmail.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/alexvergara/auditable/issues",
+        "source": "https://github.com/alexvergara/auditable"
+    },
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "~4.0|~5.0|~5.1"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
+        "psr-0": {
+            "Adi\\Auditable": "src/"
+        }
+    }
+}
