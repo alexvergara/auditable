@@ -1,15 +1,17 @@
-<?php namespace Adi\Auditable;
+<?php 
+
+namespace AlexVergara\Auditable;
 
 /*
  * This file is part of the Auditable package by Venture Craft
  *
- * (c) Venture Craft <http://www.adi.com.au>
+ * (c) Venture Craft <http://www.emediamaker.net>
  *
  */
 
 /**
  * Class AuditableTrait
- * @package Adi\Auditable
+ * @package AlexVergara\Auditable
  */
 trait AuditableTrait
 {
@@ -90,7 +92,7 @@ trait AuditableTrait
      */
     public function auditHistory()
     {
-        return $this->morphMany('\Adi\Auditable\Audit', 'auditable');
+        return $this->morphMany('\AlexVergara\Auditable\Audit', 'auditable');
     }
 
     /**
@@ -102,7 +104,7 @@ trait AuditableTrait
      */
     public static function classAuditHistory($limit = 100, $order = 'desc')
     {
-        return \Adi\Auditable\Audit::where('auditable_type', get_called_class())
+        return \AlexVergara\Auditable\Audit::where('auditable_type', get_called_class())
             ->orderBy('updated_at', $order)->limit($limit)->get();
     }
 
@@ -254,7 +256,7 @@ trait AuditableTrait
                 'created_at' => new \DateTime(),
                 'updated_at' => new \DateTime(),
             );
-            $audit = new \Adi\Auditable\Audit;
+            $audit = new \AlexVergara\Auditable\Audit;
             \DB::table($audit->getTable())->insert($audits);
         }
     }

@@ -1,17 +1,19 @@
-<?php namespace Adi\Auditable;
+<?php 
+
+namespace AlexVergara\Auditable;
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
 
 /*
- * This file is part of the Auditable package by ADI
+ * This file is part of the Auditable package by Alex Vergara
  *
- * (c) Venture Craft <http://www.adi.com.au>
+ * (c) Venture Craft <http://www.emediamaker.net>
  *
  */
 
 /**
  * Class Auditable
- * @package Adi\Auditable
+ * @package AlexVergara\Auditable
  */
 class Auditable extends Eloquent
 {
@@ -79,7 +81,7 @@ class Auditable extends Eloquent
      */
     public function auditHistory()
     {
-        return $this->morphMany('\Adi\Auditable\Audit', 'auditable');
+        return $this->morphMany('\AlexVergara\Auditable\Audit', 'auditable');
     }
 
     /**
@@ -220,7 +222,7 @@ class Auditable extends Eloquent
                 'created_at' => new \DateTime(),
                 'updated_at' => new \DateTime(),
             );
-            $audit = new \Adi\Auditable\Audit;
+            $audit = new \AlexVergara\Auditable\Audit;
             \DB::table($audit->getTable())->insert($audits);
         }
     }

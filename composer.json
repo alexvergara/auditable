@@ -23,7 +23,7 @@
             "src/migrations"
         ],
         "psr-0": {
-            "Adi\\Auditable": "src/"
+            "AlexVergara\\Auditable": "src/"
         }
     }
 }
