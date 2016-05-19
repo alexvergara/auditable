@@ -47,7 +47,7 @@ class Audit extends Eloquent
      */
     public function getDetailsTable()
     {
-      return $this->details_table;
+      return $details_table;
     }
 
     /**

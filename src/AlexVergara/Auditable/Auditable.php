@@ -145,7 +145,7 @@ class Auditable extends Eloquent
                 'entity_id'        => $this->getKey(),
                 'user_id'          => $this->getUserId(),
                 'created_at'       => new \DateTime(),
-                'updated_at'       => new \DateTime(),
+                'updated_at'       => new \DateTime()
             );
 
             $details = array();
@@ -162,11 +162,12 @@ class Auditable extends Eloquent
                 $audit = new Audit;
                 $audit = \DB::table($audit->getTable())->insert($attributes);
 
-                dd($audit);
-
-                for ($i = 0; $i < count($details); $i++) $details[$i]['audit_id'] = $audit;
-                
-                \DB::table($audit->getDetailsTable())->insert($details);
+                for ($i = 0; $i < count($details); $i++) {
+                  $details[$i]['audit_id'] = $audit;
+                }
+                                
+                //\DB::table($audit->getDetailsTable())->insert($details);  // TODO: fix this
+                \DB::table('audit_details')->insert($details);
             }
         }
     }
@@ -178,24 +179,15 @@ class Auditable extends Eloquent
     {
 
         // Check if we should store creations in our audit history
-        // Set this value to true in your model if you want to
-        if(empty($this->auditCreationsEnabled))
-        {
-            // We should not store creations.
-            return false;
-        }
-
-        if ((!isset($this->auditEnabled) || $this->auditEnabled))
+        if((!isset($this->auditCreationsEnabled) || $this->auditCreationsEnabled) && (!isset($this->auditEnabled) || $this->auditEnabled))
         {
             $audits[] = array(
-                'auditable_type' => get_class($this),
-                'auditable_id' => $this->getKey(),
-                'key' => 'created_at',
-                'old_value' => null,
-                'new_value' => $this->created_at,
-                'user_id' => $this->getUserId(),
-                'created_at' => new \DateTime(),
-                'updated_at' => new \DateTime(),
+                'type'             => 'CREATE',
+                'entity'           => get_class($this),
+                'entity_id'        => $this->getKey(),
+                'user_id'          => $this->getUserId(),
+                'created_at'       => new \DateTime(),
+                'updated_at'       => new \DateTime()
             );
 
             $audit = new Audit;
@@ -210,17 +202,16 @@ class Auditable extends Eloquent
     public function postDelete()
     {
         if ((!isset($this->auditEnabled) || $this->auditEnabled)
-            && $this->isSoftDelete()
-            && $this->isAuditable('deleted_at')) {
+            //&& $this->isSoftDelete()
+            //&& $this->isAuditable('deleted_at')
+        ) {
             $audits[] = array(
-                'auditable_type' => get_class($this),
-                'auditable_id' => $this->getKey(),
-                'key' => 'deleted_at',
-                'old_value' => null,
-                'new_value' => $this->deleted_at,
-                'user_id' => $this->getUserId(),
-                'created_at' => new \DateTime(),
-                'updated_at' => new \DateTime(),
+                'type'             => ($this->isSoftDelete() ? 'SOFT' : '').'DELETE',
+                'entity'           => get_class($this),
+                'entity_id'        => $this->getKey(),
+                'user_id'          => $this->getUserId(),
+                'created_at'       => new \DateTime(),
+                'updated_at'       => new \DateTime()
             );
             $audit = new \AlexVergara\Auditable\Audit;
             \DB::table($audit->getTable())->insert($audits);

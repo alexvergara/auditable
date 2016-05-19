@@ -13,7 +13,7 @@ class CreateAuditsTable extends Migration
     {
         Schema::create('audits', function ($table) {
             $table->increments('id');
-            $table->enum('type', array('CREATE', 'UPDATE', 'DELETE'))->default('CREATE');
+            $table->enum('type', array('CREATE', 'UPDATE', 'DELETE', 'SOFTDELETE'))->default('CREATE');
             $table->string('entity');
             $table->string('entity_id');
             $table->integer('user_id');
