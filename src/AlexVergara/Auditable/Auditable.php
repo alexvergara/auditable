@@ -166,7 +166,7 @@ class Auditable extends Eloquent
 
                 for ($i = 0; $i < count($details); $i++) $details[$i]['audit_id'] = $audit;
                 
-                \DB::table($audit->getTable())->insert($details);
+                \DB::table($audit->getDetailsTable())->insert($details);
             }
         }
     }

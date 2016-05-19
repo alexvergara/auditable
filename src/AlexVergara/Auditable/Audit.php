@@ -39,6 +39,18 @@ class Audit extends Eloquent
     }
 
     /**
+     * Details Table.
+     *
+     * Grab the name of the details table
+     * 
+     * @return string details table
+     */
+    public function getDetailsTable()
+    {
+      return $this->details_table;
+    }
+
+    /**
      * Auditable.
      *
      * Grab the audit history for the model that is calling

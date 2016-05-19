@@ -168,11 +168,19 @@ trait AuditableTrait
             $AuditCleanup=false;
         }
 
+        \Log::info(!isset($this->auditEnabled));
+        \Log::info($this->auditEnabled);
+        \Log::info($this->updating);
+        \Log::info(!$LimitReached);
+        \Log::info($AuditCleanup);
+
         // check if the model already exists
         if (((!isset($this->auditEnabled) || $this->auditEnabled) && $this->updating) && (!$LimitReached || $AuditCleanup)) {
             // if it does, it means we're updating
 
             $changes_to_record = $this->changedAuditableFields();
+        
+            \Log::info($changes_to_record);
 
             $attributes = array(
                 'type'             => 'UPDATE',
@@ -203,12 +211,16 @@ trait AuditableTrait
 
                 $audit = new Audit;
                 $audit = \DB::table($audit->getTable())->insert($attributes);
+        
+                \Log::info($audit);
 
-                dd($audit);
+                for ($i = 0; $i < count($details); $i++) {
+                  $details[$i]['audit_id'] = $audit;
+                }
 
-                for ($i = 0; $i < count($details); $i++) $details[$i]['audit_id'] = $audit;
+                \Log::info($details);
                 
-                \DB::table($audit->getTable())->insert($details);
+                \DB::table($audit->getDetailsTable())->insert($details);
             }
         }
     }
