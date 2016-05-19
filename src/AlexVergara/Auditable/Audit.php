@@ -1,6 +1,6 @@
 <?php
 
-namespace Adi\Auditable;
+namespace AlexVergara\Auditable;
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
 use Illuminate\Support\Facades\Log;
@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
  * Base model to allow for audit history on
  * any model that extends this model
  *
- * (c) Venture Craft <http://www.adi.com.au>
+ * (c) Venture Craft <http://www.emediamaker.net>
  */
 class Audit extends Eloquent
 {

@@ -1,32 +1,36 @@
-<?php namespace Adi\Auditable;
+<?php 
+
+namespace AlexVergara\Auditable;
+
+use Illuminate\Database\Eloquent\Model as Eloquent;
 
 /*
- * This file is part of the Auditable package by Venture Craft
+ * This file is part of the Auditable package by Alex Vergara
  *
- * (c) Venture Craft <http://www.adi.com.au>
+ * (c) Venture Craft <http://www.emediamaker.net>
  *
  */
 
 /**
- * Class AuditableTrait
- * @package Adi\Auditable
+ * Class Auditable
+ * @package AlexVergara\Auditable
  */
-trait AuditableTrait
+class Auditable extends Eloquent
 {
     /**
-     * @var array
+     * @var
      */
-    private $originalData = array();
+    private $originalData;
 
     /**
-     * @var array
+     * @var
      */
-    private $updatedData = array();
+    private $updatedData;
 
     /**
-     * @var boolean
+     * @var
      */
-    private $updating = false;
+    private $updating;
 
     /**
      * @var array
@@ -46,27 +50,14 @@ trait AuditableTrait
     protected $dirtyData = array();
 
     /**
-     * Ensure that the bootAuditableTrait is called only
-     * if the current installation is a laravel 4 installation
-     * Laravel 5 will call bootAuditableTrait() automatically
+     * Create the event listeners for the saving and saved events
+     * This lets us save audits whenever a save is made, no matter the
+     * http method.
      */
     public static function boot()
     {
         parent::boot();
 
-        if (!method_exists(get_called_class(), 'bootTraits')) {
-            static::bootAuditableTrait();
-        }
-    }
-
-    /**
-     * Create the event listeners for the saving and saved events
-     * This lets us save audits whenever a save is made, no matter the
-     * http method.
-     *
-     */
-    public static function bootAuditableTrait()
-    {
         static::saving(function ($model) {
             $model->preSave();
         });
@@ -90,42 +81,28 @@ trait AuditableTrait
      */
     public function auditHistory()
     {
-        return $this->morphMany('\Adi\Auditable\Audit', 'auditable');
+        return $this->morphMany('\AlexVergara\Auditable\Audit', 'auditable');
     }
 
     /**
-     * Generates a list of the last $limit audits made to any objects of the class it is being called from.
+     * Invoked before a model is saved. Return false to abort the operation.
      *
-     * @param int $limit
-     * @param string $order
-     * @return mixed
+     * @return bool
      */
-    public static function classAuditHistory($limit = 100, $order = 'desc')
-    {
-        return \Adi\Auditable\Audit::where('auditable_type', get_called_class())
-            ->orderBy('updated_at', $order)->limit($limit)->get();
-    }
-
-    /**
-    * Invoked before a model is saved. Return false to abort the operation.
-    *
-    * @return bool
-    */
     public function preSave()
     {
         if (!isset($this->auditEnabled) || $this->auditEnabled) {
             // if there's no auditEnabled. Or if there is, if it's true
 
             $this->originalData = $this->original;
-            $this->updatedData = $this->attributes;
+            $this->updatedData  = $this->attributes;
 
             // we can only safely compare basic items,
             // so for now we drop any object based items, like DateTime
             foreach ($this->updatedData as $key => $val) {
-                if (gettype($val) == 'object' && !method_exists($val, '__toString')) {
+                if (gettype($val) == 'object' && ! method_exists($val, '__toString')) {
                     unset($this->originalData[$key]);
                     unset($this->updatedData[$key]);
-                    array_push($this->dontKeep, $key);
                 }
             }
 
@@ -155,47 +132,41 @@ trait AuditableTrait
      */
     public function postSave()
     {
-        if (isset($this->historyLimit) && $this->auditHistory()->count() >= $this->historyLimit) {
-            $LimitReached = true;
-        } else {
-            $LimitReached = false;
-        }
-        if (isset($this->auditCleanup)){
-            $AuditCleanup=$this->auditCleanup;
-        }else{
-            $AuditCleanup=false;
-        }
 
         // check if the model already exists
-        if (((!isset($this->auditEnabled) || $this->auditEnabled) && $this->updating) && (!$LimitReached || $AuditCleanup)) {
+        if ((!isset($this->auditEnabled) || $this->auditEnabled) && $this->updating) {
             // if it does, it means we're updating
 
             $changes_to_record = $this->changedAuditableFields();
 
-            $audits = array();
+            $attributes = array(
+                'type'             => 'UPDATE',
+                'entity'           => get_class($this),
+                'entity_id'        => $this->getKey(),
+                'user_id'          => $this->getUserId(),
+                'created_at'       => new \DateTime(),
+                'updated_at'       => new \DateTime(),
+            );
 
+            $details = array();
             foreach ($changes_to_record as $key => $change) {
-                $audits[] = array(
-                    'auditable_type' => get_class($this),
-                    'auditable_id' => $this->getKey(),
-                    'key' => $key,
-                    'old_value' => array_get($this->originalData, $key),
-                    'new_value' => $this->updatedData[$key],
-                    'user_id' => $this->getUserId(),
-                    'created_at' => new \DateTime(),
-                    'updated_at' => new \DateTime(),
+                $details[] = array(
+                    'audit_id'     => 0,
+                    'key'          => $key,
+                    'old'          => array_get($this->originalData, $key),
+                    'new'          => $this->updatedData[$key]
                 );
             }
 
-            if (count($audits) > 0) {
-                if($LimitReached && $AuditCleanup){
-                    $toDelete = $this->auditHistory()->orderBy('id','asc')->limit(count($audits))->get();
-                    foreach($toDelete as $delete){
-                        $delete->delete();
-                    }
-                }
+            if (count($details) > 0) {
                 $audit = new Audit;
-                \DB::table($audit->getTable())->insert($audits);
+                $audit = \DB::table($audit->getTable())->insert($attributes);
+
+                dd($audit);
+
+                for ($i = 0; $i < count($details); $i++) $details[$i]['audit_id'] = $audit;
+                
+                \DB::table($audit->getTable())->insert($details);
             }
         }
     }
@@ -231,8 +202,6 @@ trait AuditableTrait
             \DB::table($audit->getTable())->insert($audits);
 
         }
-
-
     }
 
     /**
@@ -242,8 +211,7 @@ trait AuditableTrait
     {
         if ((!isset($this->auditEnabled) || $this->auditEnabled)
             && $this->isSoftDelete()
-            && $this->isAuditable('deleted_at')
-        ) {
+            && $this->isAuditable('deleted_at')) {
             $audits[] = array(
                 'auditable_type' => get_class($this),
                 'auditable_id' => $this->getKey(),
@@ -254,7 +222,7 @@ trait AuditableTrait
                 'created_at' => new \DateTime(),
                 'updated_at' => new \DateTime(),
             );
-            $audit = new \Adi\Auditable\Audit;
+            $audit = new \AlexVergara\Auditable\Audit;
             \DB::table($audit->getTable())->insert($audits);
         }
     }
@@ -263,13 +231,11 @@ trait AuditableTrait
      * Attempt to find the user id of the currently logged in user
      * Supports Cartalyst Sentry/Sentinel based authentication, as well as stock Auth
      **/
-    public function getUserId()
+    private function getUserId()
     {
         try {
-            if (class_exists($class = '\SleepingOwl\AdminAuth\Facades\AdminAuth')
-                || class_exists($class = '\Cartalyst\Sentry\Facades\Laravel\Sentry')
-                || class_exists($class = '\Cartalyst\Sentinel\Laravel\Facades\Sentinel')
-            ) {
+            if (class_exists($class = '\Cartalyst\Sentry\Facades\Laravel\Sentry')
+                    || class_exists($class = '\Cartalyst\Sentinel\Laravel\Facades\Sentinel')) {
                 return ($class::check()) ? $class::getUser()->id : null;
             } elseif (\Auth::check()) {
                 return \Auth::user()->getAuthIdentifier();
@@ -328,7 +294,6 @@ trait AuditableTrait
         if (isset($this->dontKeep) && in_array($key, $this->dontKeep)) {
             return false;
         }
-
         return empty($this->doKeep);
     }
 
@@ -393,7 +358,7 @@ trait AuditableTrait
      */
     public function getAuditNullString()
     {
-        return isset($this->auditNullString) ? $this->auditNullString : 'nothing';
+        return isset($this->auditNullString)?$this->auditNullString:'nothing';
     }
 
     /**
@@ -406,7 +371,7 @@ trait AuditableTrait
      */
     public function getAuditUnknownString()
     {
-        return isset($this->auditUnknownString) ? $this->auditUnknownString : 'unknown';
+        return isset($this->auditUnknownString)?$this->auditUnknownString:'unknown';
     }
 
     /**

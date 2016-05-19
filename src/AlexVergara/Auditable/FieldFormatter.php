@@ -1,18 +1,18 @@
 <?php
 
-namespace Adi\Auditable;
+namespace AlexVergara\Auditable;
 
 /**
  * FieldFormatter.
  *
  * Allows formatting of fields
  *
- * (c) Venture Craft <http://www.adi>
+ * (c) Venture Craft <http://www.emediamaker.net>
  */
 
 /**
  * Class FieldFormatter
- * @package Adi\Auditable
+ * @package AlexVergara\Auditable
  */
 class FieldFormatter
 {
