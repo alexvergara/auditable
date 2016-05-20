@@ -7,7 +7,7 @@ namespace AlexVergara\Auditable;
  *
  * Allows formatting of fields
  *
- * (c) Venture Craft <http://www.emediamaker.net>
+ * (c) Alex Vergara <http://www.emediamaker.net>
  */
 
 /**
