@@ -5,7 +5,7 @@ namespace AlexVergara\Auditable;
 /*
  * This file is part of the Auditable package by Venture Craft
  *
- * (c) Venture Craft <http://www.emediamaker.net>
+ * (c) Alex Vergara <http://www.emediamaker.net>
  *
  */
 
