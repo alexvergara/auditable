@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model as Eloquent;
 /*
  * This file is part of the Auditable package by Alex Vergara
  *
- * (c) Venture Craft <http://www.emediamaker.net>
+ * (c) Alex Vergara <http://www.emediamaker.net>
  *
  */
 
