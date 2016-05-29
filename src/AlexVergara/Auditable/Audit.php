@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
  * Base model to allow for audit history on
  * any model that extends this model
  *
- * (c) Venture Craft <http://www.emediamaker.net>
+ * (c) Alex Vergara <http://www.emediamaker.net>
  */
 class Audit extends Eloquent
 {
