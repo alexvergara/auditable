@@ -141,7 +141,7 @@ class Auditable extends Eloquent
 
             $attributes = array(
                 'type'             => 'UPDATE',
-                'entity'           => get_class($this),
+                'entity'           => $this->getTable(),  //get_class($this),
                 'entity_id'        => $this->getKey(),
                 'user_id'          => $this->getUserId(),
                 'created_at'       => new \DateTime(),
@@ -183,7 +183,7 @@ class Auditable extends Eloquent
         {
             $audits[] = array(
                 'type'             => 'CREATE',
-                'entity'           => get_class($this),
+                'entity'           => $this->getTable(),  //get_class($this),
                 'entity_id'        => $this->getKey(),
                 'user_id'          => $this->getUserId(),
                 'created_at'       => new \DateTime(),
@@ -207,7 +207,7 @@ class Auditable extends Eloquent
         ) {
             $audits[] = array(
                 'type'             => ($this->isSoftDelete() ? 'SOFT' : '').'DELETE',
-                'entity'           => get_class($this),
+                'entity'           => $this->getTable(),  //get_class($this),
                 'entity_id'        => $this->getKey(),
                 'user_id'          => $this->getUserId(),
                 'created_at'       => new \DateTime(),
