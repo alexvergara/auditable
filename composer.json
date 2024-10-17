@@ -1,29 +1,34 @@
 {
-    "name": "alexvergara/auditable",
-    "license": "MIT",
-    "description": "Save model's data changes automatically to audit log - package for Laravel 4",
-    "keywords": ["model", "laravel", "audit", "history"],
-    "homepage": "http://github.com/alexvergara/auditable",
-    "authors": [
-        {
-            "name": "Alex Vergara",
-            "email": "alex.vergara@gmail.com"
-        }
-    ],
-    "support": {
-        "issues": "https://github.com/alexvergara/auditable/issues",
-        "source": "https://github.com/alexvergara/auditable"
-    },
-    "require": {
-        "php": "^7.3|^8.0",
-        "illuminate/support": "^8.59"
-    },
-    "autoload": {
-        "classmap": [
-            "src/migrations"
-        ],
-        "psr-0": {
-            "AlexVergara\\Auditable": "src/"
-        }
+  "name": "alexvergara/auditable",
+  "license": "MIT",
+  "description": "Save model's data changes automatically to audit log - package for Laravel 8-11",
+  "keywords": [
+    "model",
+    "laravel",
+    "audit",
+    "history"
+  ],
+  "homepage": "http://github.com/alexvergara/auditable",
+  "authors": [
+    {
+      "name": "Alex Vergara",
+      "email": "alex.vergara@gmail.com"
     }
+  ],
+  "support": {
+    "issues": "https://github.com/alexvergara/auditable/issues",
+    "source": "https://github.com/alexvergara/auditable"
+  },
+  "require": {
+    "php": "^7.3|^8.0",
+    "illuminate/support": "^8.59|^9.0|^10.0|^11.0"
+  },
+  "autoload": {
+    "classmap": [
+      "src/migrations"
+    ],
+    "psr-0": {
+      "AlexVergara\\Auditable": "src/"
+    }
+  }
 }
