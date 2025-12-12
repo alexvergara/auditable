@@ -188,7 +188,7 @@ trait AuditableTrait
                 $details[] = array(
                     'audit_id'     => 0,
                     'key'          => $key,
-                    'old'          => array_get($this->originalData, $key),
+                    'old'          => data_get($this->originalData, $key),
                     'new'          => $this->updatedData[$key]
                 );
             }
