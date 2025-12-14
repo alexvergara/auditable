@@ -269,6 +269,10 @@ trait AuditableTrait
     public function getUserId()
     {
         try {
+            if (\App::runningInConsole()) {
+                return -1;
+            }
+
             if (class_exists($class = '\SleepingOwl\AdminAuth\Facades\AdminAuth')
                 || class_exists($class = '\Cartalyst\Sentry\Facades\Laravel\Sentry')
                 || class_exists($class = '\Cartalyst\Sentinel\Laravel\Facades\Sentinel')
